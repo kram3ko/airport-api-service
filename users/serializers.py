@@ -1,0 +1,33 @@
+from django.contrib.auth import get_user_model
+from rest_framework import serializers
+from django.utils.translation import gettext_lazy as _
+
+User = get_user_model()
+
+
+class UserSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(
+        style={"input_type": "password"},
+        min_length=8,
+        label=_("Password"),
+        write_only=True,
+    )
+
+    class Meta:
+        model = User
+        fields = ("id", "email", "password", "is_staff")
+        read_only_fields = ("is_staff",)
+
+    def create(self, validated_data):
+        """Create a new user with encrypted password and return it"""
+        return User.objects.create_user(**validated_data)
+
+    def update(self, instance, validated_data):
+        """Update a user, set the password correctly and return it"""
+        password = validated_data.pop("password", None)
+        user = super().update(instance, validated_data)
+        if password:
+            user.set_password(password)
+            user.save()
+
+        return user
