@@ -1,8 +1,10 @@
+from django.contrib.auth import get_user_model
 from rest_framework import generics
-from rest_framework.parsers import MultiPartParser
 from rest_framework.permissions import IsAuthenticated, AllowAny
 
 from users.serializers import UserSerializer
+
+User = get_user_model()
 
 
 class CreateUserView(generics.CreateAPIView):

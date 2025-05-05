@@ -11,6 +11,9 @@ class AirportSerializer(serializers.ModelSerializer):
 
 
 class RouteSerializer(serializers.ModelSerializer):
+    source = AirportSerializer(read_only=True)
+    destination = AirportSerializer(read_only=True)
+
     class Meta:
         model = Route
         fields = ["source", "destination", "distance", "flight_number"]

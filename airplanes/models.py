@@ -3,13 +3,21 @@ from django_resized import ResizedImageField
 
 
 class AirplaneType(models.Model):
+    class AirplaneCategory(models.TextChoices):
+        PASSENGER = "Passenger", "Passenger"
+        PRIVATE = "Private", "Private"
+        CARGO = "Cargo", "Cargo"
+
     name = models.CharField(max_length=100, unique=True)
+    category = models.CharField(
+        max_length=20, choices=AirplaneCategory.choices, null=True, blank=True
+    )
 
     class Meta:
         ordering = ["id"]
 
     def __str__(self):
-        return self.name
+        return f"{self.name} - cat: {self.category}"
 
 
 class Airplane(models.Model):
