@@ -19,7 +19,6 @@ from tickets.serializers import (
     TickerDetailSerializer,
     OrderCreateSerializer,
     FlightWithSeatsSerializer,
-    TicketBookingSerializer,
     RouteBasedTicketBookingSerializer
 )
 from airports.models import Airport
@@ -64,8 +63,7 @@ class TicketViewSet(BaseViewSetMixin, viewsets.ModelViewSet):
         "retrieve": TickerDetailSerializer,
         "update": TicketCreateSerializer,
         "flight_seats": FlightWithSeatsSerializer,
-        "book_seats": TicketBookingSerializer,
-        "book_by_route": RouteBasedTicketBookingSerializer,
+        "book_by_route": TicketCreateSerializer,
     }
 
     def get_queryset(self):
@@ -78,16 +76,16 @@ class TicketViewSet(BaseViewSetMixin, viewsets.ModelViewSet):
     @action(detail=False, methods=["get"])
     def booking_info(self, request):
         """
-        Получить информацию, необходимую для создания билета:
-        - список аэропортов
-        - список маршрутов
-        - список ближайших рейсов
+        Retrieve information needed to create a ticket:
+        - list of airports
+        - list of routes
+        - list of upcoming flights
         """
-        # Добавляем к response список всех аэропортов для формы создания билетов
+        # Add a list of all airports to the response
         airports = Airport.objects.all()
         airport_data = [{'id': a.id, 'name': str(a)} for a in airports]
 
-        # Получаем список доступных маршрутов
+        # Get a list of available routes
         routes_data = []
         for route in Flight.objects.values('route__source', 'route__destination', 'route__source__name',
                                            'route__destination__name').distinct():
@@ -98,14 +96,14 @@ class TicketViewSet(BaseViewSetMixin, viewsets.ModelViewSet):
                 'destination_name': route['route__destination__name'],
             })
 
-        # Добавляем список рейсов на ближайшее время
+        # Add a list of upcoming flights
         upcoming_flights = Flight.objects.filter(
             departure_time__gte=timezone.now()
-        ).order_by('departure_time')[:10]  # Ограничиваем 10 ближайшими рейсами
+        ).order_by('departure_time')[:10]  # Limit to the 10 nearest flights
 
         upcoming_flights_data = []
         for flight in upcoming_flights:
-            # Получаем информацию о свободных местах
+            # Get information about available seats
             total_seats = flight.airplane.total_seats
             booked_seats_count = Ticket.objects.filter(flight=flight).count()
             available_seats_count = total_seats - booked_seats_count
@@ -119,7 +117,7 @@ class TicketViewSet(BaseViewSetMixin, viewsets.ModelViewSet):
                 'available_seats': available_seats_count
             })
 
-        # Формируем ответ с информацией для создания билета
+        # Form the response with the information needed to create a ticket
         return Response({
             'airports_list': airport_data,
             'routes_list': routes_data,
@@ -128,12 +126,12 @@ class TicketViewSet(BaseViewSetMixin, viewsets.ModelViewSet):
 
     @action(detail=True, methods=["get"])
     def flight_seats(self, request, pk=None):
-        """Получение информации о доступных местах на конкретном рейсе"""
+        """Retrieve information about available seats on a specific flight"""
         try:
             flight = Flight.objects.get(pk=pk)
         except Flight.DoesNotExist:
             return Response(
-                {"detail": "Рейс не найден"},
+                {"detail": "Flight not found"},
                 status=status.HTTP_404_NOT_FOUND
             )
 
@@ -141,53 +139,20 @@ class TicketViewSet(BaseViewSetMixin, viewsets.ModelViewSet):
         return Response(serializer.data)
 
     @action(detail=False, methods=["post"])
-    def book_seats(self, request):
-        """
-        Бронирование билетов с указанием конкретных рядов и мест
-        
-        Поддерживает два формата данных:
-        
-        1. JSON формат (для API):
-        {
-            "flight_id": 1,
-            "seats": [
-                {"row": 1, "seat": 2},
-                {"row": 1, "seat": 3}
-            ]
-        }
-        
-        2. Формат для HTML-форм:
-        flight_id=1&rows=1,1&seat_numbers=2,3
-        
-        где rows - список рядов через запятую,
-        seat_numbers - список номеров мест через запятую
-        """
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-
-        tickets = serializer.save()
-
-        return Response(
-            {"tickets": TicketListSerializer(tickets, many=True).data},
-            status=status.HTTP_201_CREATED
-        )
-
-    @action(detail=False, methods=["post"])
     def book_by_route(self, request):
         """
-        Бронирование билетов с указанием маршрута (откуда/куда)
-        
-        Формат данных для HTML-форм:
-        - source: ID аэропорта отправления (обязательно)
-        - destination: ID аэропорта прибытия (обязательно)
-        - rows: Список рядов через запятую, например: "1,2,3"
-        - seat_numbers: Список мест через запятую, например: "1,2,3"
-        
-        Например:
+        Book tickets by specifying a route (source/destination)
+
+        Data format for API requests:
+        - source: ID of the departure airport (required)
+        - destination: ID of the destination airport (required)
+        - rows: Comma-separated list of rows, e.g., "1,2,3"
+        - seat_numbers: Comma-separated list of seat numbers, e.g., "1,2,3"
+
+        Example:
         source=1&destination=2&rows=1,2&seat_numbers=3,4
-        
-        Система сама найдет подходящий рейс по указанному маршруту.
-        Не используйте поле seats в HTML-формах - оно предназначено только для API запросов.
+
+        The system will automatically find a suitable flight for the specified route.
         """
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -198,4 +163,3 @@ class TicketViewSet(BaseViewSetMixin, viewsets.ModelViewSet):
             {"tickets": TicketListSerializer(tickets, many=True).data},
             status=status.HTTP_201_CREATED
         )
-

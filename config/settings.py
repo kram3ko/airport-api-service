@@ -141,6 +141,7 @@ STATIC_ROOT = "/files/static"
 
 MEDIA_ROOT = "/files/media"
 MEDIA_URL = "/media/"
+LOGIN_REDIRECT_URL = "flights:flights-list"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
