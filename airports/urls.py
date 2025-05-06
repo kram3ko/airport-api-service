@@ -1,12 +1,14 @@
 from django.urls import path, include
-from rest_framework import routers
+from rest_framework.routers import DefaultRouter
 
 from airports.views import AirportViewSet, RouteViewSet
 
-app_name = "airports"
+router = DefaultRouter()
+router.register(r'airports', AirportViewSet, basename='airport')
+router.register(r'routes', RouteViewSet, basename='route')
 
-router = routers.DefaultRouter()
-router.register("airports", AirportViewSet, basename="airports")
-router.register("routes", RouteViewSet, basename="routes")
+app_name = 'airports'
 
-urlpatterns = [path("", include(router.urls))]
+urlpatterns = [
+    path('', include(router.urls)),
+]
