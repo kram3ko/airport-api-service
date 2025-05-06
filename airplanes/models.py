@@ -2,6 +2,7 @@ from django.db import models
 from django_resized import ResizedImageField
 
 
+
 class AirplaneType(models.Model):
     class AirplaneCategory(models.TextChoices):
         PASSENGER = "Passenger", "Passenger"
@@ -29,7 +30,6 @@ class Airplane(models.Model):
     )
     photo = ResizedImageField(
         size=[300, 300],
-        crop=["middle", "center"],
         upload_to="airplanes/",
         force_format="JPEG",
         null=True,

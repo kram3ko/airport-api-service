@@ -14,7 +14,8 @@ class Airport(models.Model):
                 name="unique_airport_name_city_country",
             )
         ]
-
+    def __str__(self):
+        return f"{self.name} - {self.city}, {self.country}"
 
 class Route(models.Model):
     source = models.ForeignKey(
@@ -32,3 +33,6 @@ class Route(models.Model):
                 fields=["source", "destination", "flight_number"], name="unique_route"
             )
         ]
+
+    def __str__(self):
+        return f"{self.source} - {self.destination} ({self.flight_number})"

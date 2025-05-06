@@ -48,6 +48,8 @@ INSTALLED_APPS = [
     "drf_spectacular",
     # django rest debug toolbar
     "debug_toolbar",
+    # django filter
+    "django_filters",
     # local apps
     "airplanes",
     "airports",

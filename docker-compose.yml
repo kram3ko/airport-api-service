@@ -20,8 +20,9 @@ services:
 
   nginx:
     image: nginx:alpine
+    container_name: airport-nginx
     volumes:
-      - ./docker/nginx/sites-available/airplane.conf:/etc/nginx/conf.d/airplane.conf:ro
+      - ./docker/nginx/sites-available/:/etc/nginx/conf.d:ro/
       - airport_media:/files/media
       - airport_static:/files/static
     ports:
@@ -31,6 +32,7 @@ services:
 
   airport_db:
     image: postgres:alpine
+    container_name: airport-db
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}" ]
       interval: 10s
@@ -42,6 +44,18 @@ services:
       - .env
     volumes:
       - airport_db:$PGDATA
+  pgadmin4:
+    image: dpage/pgadmin4
+    container_name: pgadmin4_container
+    ports:
+      - "8888:80"
+    env_file:
+      - .env
+    depends_on:
+      airport_db:
+        condition: service_healthy
+    volumes:
+      - pgadmin-data:$PGADMIN
 
 volumes:
   airport_db:
@@ -50,3 +64,5 @@ volumes:
     name: airport_media
   airport_static:
     name: airport_static
+  pgadmin-data:
+    name: pgadmin_data_volume
