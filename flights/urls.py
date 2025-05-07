@@ -6,7 +6,7 @@ from flights.views import FlightViewSet, CrewViewSet
 app_name = "flights"
 
 router = routers.DefaultRouter()
-router.register("flights", FlightViewSet, basename="flights")
+router.register("", FlightViewSet, basename="flights")
 router.register("crew", CrewViewSet, basename="crew")
 
 urlpatterns = [

@@ -149,9 +149,9 @@ LOGIN_REDIRECT_URL = "flights:flights-list"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 REST_FRAMEWORK = {
-    # "DEFAULT_PERMISSION_CLASSES": [
-    #     "base.permissions.IsAdminOrIfAuthenticatedReadOnly",
-    # ],
+    "DEFAULT_PERMISSION_CLASSES": [
+        "base.permissions.IsAdminOrIfAuthenticatedReadOnly",
+    ],
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework_simplejwt.authentication.JWTAuthentication",
         "rest_framework.authentication.SessionAuthentication",

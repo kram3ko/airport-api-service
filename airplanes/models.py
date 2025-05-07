@@ -2,7 +2,6 @@ from django.db import models
 from django_resized import ResizedImageField
 
 
-
 class AirplaneType(models.Model):
     class AirplaneCategory(models.TextChoices):
         PASSENGER = "Passenger", "Passenger"

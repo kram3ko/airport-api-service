@@ -7,7 +7,15 @@ from base.filters import AirplaneFilter
 from base.mixins import BaseViewSetMixin
 from base.pagination import DefaultPagination
 from flights.models import Flight, Crew
-from flights.serializers import FlightSerializer, CrewSerializer, CrewListSerializer, FlightListSerializer
+from flights.serializers import (
+    FlightSerializer,
+    CrewSerializer,
+    CrewListSerializer,
+    FlightListSerializer,
+    FlightCreateSerializer,
+    FlightDetailSerializer,
+    FlightUpdateSerializer,
+)
 
 
 class CrewViewSet(BaseViewSetMixin, viewsets.ModelViewSet):
@@ -31,4 +39,8 @@ class FlightViewSet(BaseViewSetMixin, viewsets.ModelViewSet):
 
     action_serializers = {
         "list": FlightListSerializer,
+        "create": FlightCreateSerializer,
+        "retrieve": FlightDetailSerializer,
+        "update": FlightUpdateSerializer,
+        "partial_update": FlightUpdateSerializer,
     }

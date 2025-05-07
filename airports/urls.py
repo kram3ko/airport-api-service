@@ -4,11 +4,11 @@ from rest_framework.routers import DefaultRouter
 from airports.views import AirportViewSet, RouteViewSet
 
 router = DefaultRouter()
-router.register(r'airports', AirportViewSet, basename='airport')
-router.register(r'routes', RouteViewSet, basename='route')
+router.register("", AirportViewSet, basename="airport")
+router.register("routes", RouteViewSet, basename="route")
 
-app_name = 'airports'
+app_name = "airports"
 
 urlpatterns = [
-    path('', include(router.urls)),
+    path("", include(router.urls)),
 ]
