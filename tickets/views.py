@@ -1,6 +1,6 @@
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
@@ -55,8 +55,6 @@ class TicketViewSet(BaseViewSetMixin, viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = [
-        "flight",
-        "order",
         "flight__route__source",
         "flight__route__destination",
     ]
@@ -74,7 +72,6 @@ class TicketViewSet(BaseViewSetMixin, viewsets.ModelViewSet):
     }
 
     def get_queryset(self):
-        # Only show current user's tickets unless staff
         user = self.request.user
         if user.is_staff:
             return Ticket.objects.all()
@@ -141,39 +138,21 @@ class TicketViewSet(BaseViewSetMixin, viewsets.ModelViewSet):
             }
         )
 
-    @action(detail=True, methods=["get"])
-    def flight_seats(self, request, pk=None):
-        """Retrieve information about available seats on a specific flight"""
-        try:
-            flight = Flight.objects.get(pk=pk)
-        except Flight.DoesNotExist:
-            return Response(
-                {"detail": "Flight not found"}, status=status.HTTP_404_NOT_FOUND
-            )
-
-        serializer = FlightWithSeatsSerializer(flight)
-        return Response(serializer.data)
-
     @action(detail=False, methods=["post"])
     def book_by_route(self, request):
         """
         Book tickets by specifying a route (source/destination)
 
-        Data format for API requests:
-        - source: ID of the departure airport (required)
-        - destination: ID of the destination airport (required)
-        - rows: Comma-separated list of rows, e.g., "1,2,3"
-        - seat_numbers: Comma-separated list of seat numbers, e.g., "1,2,3"
-
-        Example:
-        source=1&destination=2&rows=1,2&seat_numbers=3,4
-
         The system will automatically find a suitable flight for the specified route.
         """
+
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
         tickets = serializer.save()
+
+        if not isinstance(tickets, (list, tuple)):
+            tickets = [tickets]
 
         return Response(
             {"tickets": TicketListSerializer(tickets, many=True).data},

@@ -20,5 +20,12 @@ class Ticket(models.Model):
     flight = models.ForeignKey(Flight, on_delete=models.CASCADE, related_name="tickets")
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="tickets")
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["flight", "row", "seat"], name="unique_flight_row_seat"
+            )
+        ]
+
     def __str__(self):
         return f"Ticket {self.id} for Flight {self.flight} (Row: {self.row}, Seat: {self.seat})"

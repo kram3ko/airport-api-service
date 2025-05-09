@@ -2,8 +2,8 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets
 from rest_framework.filters import OrderingFilter
 from rest_framework.filters import SearchFilter
+from rest_framework.permissions import IsAuthenticated
 
-from base.filters import AirplaneFilter
 from base.mixins import BaseViewSetMixin
 from base.pagination import DefaultPagination
 from flights.models import Flight, Crew
@@ -28,13 +28,23 @@ class CrewViewSet(BaseViewSetMixin, viewsets.ModelViewSet):
 
 
 class FlightViewSet(BaseViewSetMixin, viewsets.ModelViewSet):
-    queryset = Flight.objects.all()
+    queryset = Flight.objects.select_related(
+        "route",
+        "route__source",
+        "route__destination",
+        "airplane",
+        "airplane__airplane_type",
+    ).prefetch_related("crew")
+
     serializer_class = FlightSerializer
-    filterset_class = AirplaneFilter
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    permission_classes = [IsAuthenticated]
     ordering_fields = ["departure_time", "arrival_time"]
     ordering = ["departure_time"]
-    search_fields = ["route__source__name", "route__destination__name"]
+    filterset_fields = [
+        "route__source",
+        "route__destination",
+    ]
     pagination_class = DefaultPagination
 
     action_serializers = {

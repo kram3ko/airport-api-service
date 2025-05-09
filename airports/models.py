@@ -31,13 +31,6 @@ class Airport(models.Model):
     def __str__(self):
         return f"{self.name} - {self.city}, {self.country}"
 
-    def save(self, *args, **kwargs):
-        # Capitalize first letter of each word in name, city and country
-        self.name = self.name.title()
-        self.city = self.city.title()
-        self.country = self.country.title()
-        super().save(*args, **kwargs)
-
 
 class Route(models.Model):
     """
@@ -62,11 +55,7 @@ class Route(models.Model):
         constraints = [
             models.UniqueConstraint(
                 fields=["source", "destination", "flight_number"], name="unique_route"
-            ),
-            models.CheckConstraint(
-                check=~models.Q(source=models.F("destination")),
-                name="different_source_destination",
-            ),
+            )
         ]
         indexes = [
             models.Index(fields=["flight_number"]),

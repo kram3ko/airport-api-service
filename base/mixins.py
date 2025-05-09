@@ -1,8 +1,4 @@
 class BaseViewSetMixin:
-    """
-    Mixin for mapping actions with serializers and permissions
-    """
-
     def get_serializer_class(self):
         if (
             hasattr(self, "action_serializers")

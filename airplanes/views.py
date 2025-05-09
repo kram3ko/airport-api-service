@@ -8,7 +8,6 @@ from airplanes.serializers import (
     AirplaneTypeListSerializer,
     AirplaneTypeDetailSerializer,
 )
-
 from base.mixins import BaseViewSetMixin
 from base.pagination import DefaultPagination
 

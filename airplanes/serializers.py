@@ -56,3 +56,4 @@ class AirplaneCreateSerializer(AirplaneSerializer):
     airplane_type = IExactCreatableSlugRelatedField(
         many=False, queryset=AirplaneType.objects.all(), slug_field="name"
     )
+    photo = serializers.ImageField(required=False)

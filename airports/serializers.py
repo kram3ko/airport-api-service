@@ -1,7 +1,6 @@
 from rest_framework import serializers
 
 from airports.models import Airport, Route
-from base.serializers import IExactCreatableSlugRelatedField
 
 
 class AirportSerializer(serializers.ModelSerializer):
@@ -66,9 +65,6 @@ class RouteCreateSerializer(serializers.ModelSerializer):
 
 
 class RouteUpdateSerializer(serializers.ModelSerializer):
-    source = serializers.PrimaryKeyRelatedField(queryset=Airport.objects.all())
-    destination = serializers.PrimaryKeyRelatedField(queryset=Airport.objects.all())
-
     class Meta:
         model = Route
-        fields = ["source", "destination", "distance", "flight_number"]
+        fields = ["source", "destination"]

@@ -4,7 +4,7 @@ from rest_framework.routers import DefaultRouter
 from airports.views import AirportViewSet, RouteViewSet
 
 router = DefaultRouter()
-router.register("", AirportViewSet, basename="airport")
+router.register("airports", AirportViewSet, basename="airport")
 router.register("routes", RouteViewSet, basename="route")
 
 app_name = "airports"

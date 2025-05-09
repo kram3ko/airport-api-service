@@ -8,7 +8,9 @@ from airports.serializers import (
     AirportSerializer,
     RouteSerializer,
     RouteUpdateSerializer,
+    RouteCreateSerializer,
 )
+from base.mixins import BaseViewSetMixin
 from base.pagination import DefaultPagination
 
 
@@ -28,7 +30,7 @@ class AirportViewSet(viewsets.ModelViewSet):
     ordering = ["name"]
 
 
-class RouteViewSet(viewsets.ModelViewSet):
+class RouteViewSet(BaseViewSetMixin, viewsets.ModelViewSet):
     """
     API endpoint that allows routes to be viewed or edited.
     """
@@ -44,6 +46,7 @@ class RouteViewSet(viewsets.ModelViewSet):
     ordering = ["flight_number"]
 
     action_serializers = {
+        "create": RouteCreateSerializer,
         "update": RouteUpdateSerializer,
         "partial_update": RouteUpdateSerializer,
     }

@@ -6,7 +6,7 @@ from tickets.views import TicketViewSet, OrderViewSet
 app_name = "tickets"
 
 router = DefaultRouter()
-router.register("", TicketViewSet, basename="ticket")
+router.register("tickets", TicketViewSet, basename="ticket")
 router.register("orders", OrderViewSet, basename="order")
 
 urlpatterns = [

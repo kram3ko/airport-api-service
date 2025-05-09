@@ -76,11 +76,10 @@ class FlightUpdateSerializer(serializers.ModelSerializer):
         required=False,
         help_text="If not provided, the departure time will be set to now",
     )
-    arrival_time = serializers.DateTimeField(required=True)
 
     class Meta:
         model = Flight
-        fields = ["id", "airplane", "crew", "departure_time", "arrival_time"]
+        fields = ["id", "airplane", "crew", "route", "departure_time", "arrival_time"]
 
 
 class CrewListSerializer(serializers.ModelSerializer):
