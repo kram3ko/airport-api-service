@@ -1,5 +1,6 @@
-from django.db import models
+from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
+from django.db import models
 
 
 class Airport(models.Model):
@@ -44,7 +45,8 @@ class Route(models.Model):
         to=Airport, on_delete=models.CASCADE, related_name="destination_routes"
     )
     distance = models.PositiveIntegerField(
-        validators=[MinValueValidator(1, message="Distance must be greater than 0")]
+        validators=[MinValueValidator(1, message="Distance must be greater than 0")],
+        null=False,
     )
     flight_number = models.CharField(max_length=50, db_index=True)
 
@@ -65,7 +67,5 @@ class Route(models.Model):
         return f"{self.source} - {self.destination} ({self.flight_number})"
 
     def clean(self):
-        from django.core.exceptions import ValidationError
-
         if self.source == self.destination:
             raise ValidationError("Source and destination airports cannot be the same.")

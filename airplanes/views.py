@@ -2,11 +2,11 @@ from rest_framework import viewsets
 
 from airplanes.models import Airplane, AirplaneType
 from airplanes.serializers import (
-    AirplaneSerializer,
-    AirplaneTypeSerializer,
     AirplaneCreateSerializer,
-    AirplaneTypeListSerializer,
+    AirplaneSerializer,
     AirplaneTypeDetailSerializer,
+    AirplaneTypeListSerializer,
+    AirplaneTypeSerializer,
 )
 from base.mixins import BaseViewSetMixin
 from base.pagination import DefaultPagination

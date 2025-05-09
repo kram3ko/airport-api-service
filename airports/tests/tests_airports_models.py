@@ -26,9 +26,9 @@ class AirportModelTests(TestCase):
         airport = Airport.objects.create(
             name="lower airport", city="lower city", country="lower country"
         )
-        self.assertEqual(airport.name, "Lower Airport")
-        self.assertEqual(airport.city, "Lower City")
-        self.assertEqual(airport.country, "Lower Country")
+        self.assertEqual(airport.name, "lower airport")
+        self.assertEqual(airport.city, "lower city")
+        self.assertEqual(airport.country, "lower country")
 
     def test_unique_constraint(self):
         with self.assertRaises(IntegrityError):

@@ -1,27 +1,26 @@
-from rest_framework import viewsets, status
+from django.utils import timezone
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import status, viewsets
 from rest_framework.decorators import action
+from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.filters import SearchFilter, OrderingFilter
-from django.utils import timezone
 
+from airports.models import Airport
 from base.mixins import BaseViewSetMixin
 from base.pagination import DefaultPagination
 from base.permissions import IsAdminOrIfAuthenticatedReadOnly
-from tickets.models import Order, Ticket
 from flights.models import Flight
+from tickets.models import Order, Ticket
 from tickets.serializers import (
-    OrderSerializer,
-    TicketSerializer,
-    TicketListSerializer,
-    OrderListSerializer,
-    TicketCreateSerializer,
-    TickerDetailSerializer,
-    FlightWithSeatsSerializer,
     OrderCreateSerializer,
+    OrderListSerializer,
+    OrderSerializer,
+    TickerDetailSerializer,
+    TicketCreateSerializer,
+    TicketListSerializer,
+    TicketSerializer,
 )
-from airports.models import Airport
 
 
 class OrderViewSet(BaseViewSetMixin, viewsets.ModelViewSet):
@@ -67,7 +66,6 @@ class TicketViewSet(BaseViewSetMixin, viewsets.ModelViewSet):
         "create": TicketCreateSerializer,
         "retrieve": TickerDetailSerializer,
         "update": TicketCreateSerializer,
-        "flight_seats": FlightWithSeatsSerializer,
         "book_by_route": TicketCreateSerializer,
     }
 
@@ -106,14 +104,12 @@ class TicketViewSet(BaseViewSetMixin, viewsets.ModelViewSet):
                 }
             )
 
-        # Add a list of upcoming flights
         upcoming_flights = Flight.objects.filter(
             departure_time__gte=timezone.now()
-        ).order_by("departure_time")[:10]  # Limit to the 10 nearest flights
+        ).order_by("departure_time")[:10]
 
         upcoming_flights_data = []
         for flight in upcoming_flights:
-            # Get information about available seats
             total_seats = flight.airplane.total_seats
             booked_seats_count = Ticket.objects.filter(flight=flight).count()
             available_seats_count = total_seats - booked_seats_count
@@ -129,7 +125,6 @@ class TicketViewSet(BaseViewSetMixin, viewsets.ModelViewSet):
                 }
             )
 
-        # Form the response with the information needed to create a ticket
         return Response(
             {
                 "airports_list": airport_data,

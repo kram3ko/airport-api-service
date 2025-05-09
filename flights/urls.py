@@ -1,7 +1,7 @@
-from django.urls import path, include
+from django.urls import include, path
 from rest_framework import routers
 
-from flights.views import FlightViewSet, CrewViewSet
+from flights.views import CrewViewSet, FlightViewSet
 
 app_name = "flights"
 

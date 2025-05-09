@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import Flight, Crew
+
+from .models import Crew, Flight
 
 
 @admin.register(Flight)

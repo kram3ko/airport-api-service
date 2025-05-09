@@ -1,7 +1,7 @@
-from django.urls import path, include
+from django.urls import include, path
 from rest_framework import routers
 
-from airplanes.views import AirplaneViewSet, AirplaneTypeViewSet
+from airplanes.views import AirplaneTypeViewSet, AirplaneViewSet
 
 app_name = "airplanes"
 

@@ -1,15 +1,15 @@
-from rest_framework import serializers
 from django.utils import timezone
+from rest_framework import serializers
 
 from airplanes.serializers import AirplaneSerializer
 from airports.models import Route
 from airports.serializers import (
-    RouteSerializer,
     RouteCreateSerializer,
     RouteListSerializer,
-    RouteUpdateSerializer,
+    RouteSerializer,
 )
-from flights.models import Flight, Crew
+from flights.models import Crew, Flight
+from tickets.models import Ticket
 
 
 class CrewSerializer(serializers.ModelSerializer):
@@ -80,6 +80,68 @@ class FlightUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Flight
         fields = ["id", "airplane", "crew", "route", "departure_time", "arrival_time"]
+
+
+class FlightWithSeatsSerializer(serializers.ModelSerializer):
+    """
+    Serializer for displaying a flight with available rows and seats
+    """
+
+    source = serializers.CharField(
+        source="route.source.name",
+        read_only=True,
+    )
+    destination = serializers.CharField(
+        source="route.destination.name",
+        read_only=True,
+    )
+    departure_date = serializers.DateTimeField(
+        source="departure_time",
+        read_only=True,
+    )
+    available_seats = serializers.SerializerMethodField(
+        read_only=True,
+    )
+    available_rows = serializers.SerializerMethodField(
+        read_only=True,
+    )
+
+    class Meta:
+        model = Flight
+        fields = [
+            "id",
+            "source",
+            "destination",
+            "departure_time",
+            "arrival_time",
+            "departure_date",
+            "available_seats",
+            "available_rows",
+        ]
+
+    def get_available_seats(self, obj):
+        total_seats = obj.airplane.total_seats
+        booked_seats = Ticket.objects.filter(flight=obj).count()
+        return total_seats - booked_seats
+
+    def get_available_rows(self, obj):
+        booked_seats = set(Ticket.objects.filter(flight=obj).values_list("row", "seat"))
+
+        rows_with_seats = {}
+
+        for row in range(1, obj.airplane.rows + 1):
+            available_seats = []
+            for seat in range(1, obj.airplane.seats_in_row + 1):
+                if (row, seat) not in booked_seats:
+                    available_seats.append(seat)
+
+            if available_seats:
+                rows_with_seats[row] = available_seats
+        result = []
+        for row, seats in rows_with_seats.items():
+            result.append({"row": row, "available_seats": seats})
+
+        return result
 
 
 class CrewListSerializer(serializers.ModelSerializer):

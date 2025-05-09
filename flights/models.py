@@ -1,6 +1,7 @@
 from django.db import models
-from airports.models import Route
+
 from airplanes.models import Airplane
+from airports.models import Route
 
 
 class Crew(models.Model):
@@ -22,4 +23,8 @@ class Flight(models.Model):
     crew = models.ManyToManyField(Crew, related_name="flights")
 
     def __str__(self):
-        return f"Flight from {self.route.source} to {self.route.destination} by airplane {self.airplane.name}"
+        return (
+            f"Flight from {self.route.source} "
+            f"to {self.route.destination} "
+            f"by airplane {self.airplane.name}"
+        )

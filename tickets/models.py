@@ -28,4 +28,4 @@ class Ticket(models.Model):
         ]
 
     def __str__(self):
-        return f"Ticket {self.id} for Flight {self.flight} (Row: {self.row}, Seat: {self.seat})"
+        return f"Ticket {self.flight} (Row: {self.row}, Seat: {self.seat})"

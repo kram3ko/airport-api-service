@@ -1,14 +1,14 @@
-from rest_framework import viewsets
-from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.filters import SearchFilter, OrderingFilter
+from rest_framework import viewsets
+from rest_framework.filters import OrderingFilter, SearchFilter
+from rest_framework.permissions import IsAuthenticated
 
 from airports.models import Airport, Route
 from airports.serializers import (
     AirportSerializer,
+    RouteCreateSerializer,
     RouteSerializer,
     RouteUpdateSerializer,
-    RouteCreateSerializer,
 )
 from base.mixins import BaseViewSetMixin
 from base.pagination import DefaultPagination

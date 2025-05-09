@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from airplanes.models import AirplaneType, Airplane
+from airplanes.models import Airplane, AirplaneType
 from base.serializers import IExactCreatableSlugRelatedField
 
 

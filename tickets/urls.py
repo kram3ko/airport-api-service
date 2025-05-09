@@ -1,7 +1,7 @@
-from django.urls import path, include
+from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
-from tickets.views import TicketViewSet, OrderViewSet
+from tickets.views import OrderViewSet, TicketViewSet
 
 app_name = "tickets"
 
