@@ -35,22 +35,22 @@ ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=[])
 # Application definition
 
 INSTALLED_APPS = [
+    # Django default apps
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    # Django rest_framework
+
+    # Third-party apps
     "rest_framework",
     "rest_framework_simplejwt",
-    # django rest framework spectacular
     "drf_spectacular",
-    # django rest debug toolbar
     "debug_toolbar",
-    # django filter
     "django_filters",
-    # local apps
+
+    # Local apps
     "airplanes",
     "airports",
     "flights",
@@ -148,13 +148,13 @@ LOGIN_REDIRECT_URL = "flights:flights-list"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+# django rest framework settings
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
         "base.permissions.IsAdminOrIfAuthenticatedReadOnly",
     ],
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework_simplejwt.authentication.JWTAuthentication",
-        "rest_framework.authentication.SessionAuthentication",
     ],
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "DEFAULT_THROTTLE_CLASSES": [
@@ -183,7 +183,7 @@ SPECTACULAR_SETTINGS = {
         "defaultModelExpandDepth": 2,
     },
 }
-
+# settings for django-debug-toolbar
 INTERNAL_IPS = [
     "127.0.0.1",
     "172.17.0.1",
