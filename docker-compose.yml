@@ -6,12 +6,12 @@ services:
     container_name: django-rest
     image: kram3ko/airport
     ports:
-      - "8001:8000"
+      - "8000:8000"
     env_file:
       - .env
     volumes:
       # no sync for production
-      - ./:/app
+#      - ./:/app
       - airport_media:/files/media
       - airport_static:/files/static
     depends_on:

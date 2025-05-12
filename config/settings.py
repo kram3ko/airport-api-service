@@ -141,6 +141,7 @@ STATIC_ROOT = "/files/static"
 
 MEDIA_ROOT = "/files/media"
 MEDIA_URL = "/media/"
+LOGIN_URL = "users:token_obtain_pair"
 LOGIN_REDIRECT_URL = "flights:flights-list"
 
 # Default primary key field type
