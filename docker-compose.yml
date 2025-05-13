@@ -6,12 +6,12 @@ services:
     container_name: django-rest
     image: kram3ko/airport
     ports:
-      - "8000:8000"
+      - "8001:8000"
     env_file:
       - .env
     volumes:
       # no sync for production
-#      - ./:/app
+      #      - ./:/app
       - airport_media:/files/media
       - airport_static:/files/static
     depends_on:
@@ -44,6 +44,7 @@ services:
       - .env
     volumes:
       - airport_db:$PGDATA
+
   pgadmin4:
     image: dpage/pgadmin4
     container_name: pgadmin4_container
@@ -55,7 +56,18 @@ services:
       airport_db:
         condition: service_healthy
     volumes:
-      - pgadmin-data:$PGADMIN
+      - pgadmin_data:$PGADMIN
+
+  redis:
+    image: redis:latest
+    volumes:
+      - redis_airport_data:/data
+    restart: always
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 volumes:
   airport_db:
@@ -64,5 +76,6 @@ volumes:
     name: airport_media
   airport_static:
     name: airport_static
-  pgadmin-data:
+  pgadmin_data:
     name: pgadmin_data_volume
+  redis_airport_data:

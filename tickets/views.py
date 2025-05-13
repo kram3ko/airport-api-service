@@ -1,4 +1,6 @@
 from django.utils import timezone
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page, never_cache
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import mixins, status, viewsets
 from rest_framework.decorators import action
@@ -13,16 +15,24 @@ from flights.models import Flight
 from tickets.models import Order, Ticket
 from tickets.serializers import (
     OrderCreateSerializer,
+    OrderDetailSerializer,
     OrderListSerializer,
     OrderSerializer,
-    TicketDetailSerializer,
     TicketByRouteSerializer,
+    TicketDetailSerializer,
     TicketListSerializer,
-    TicketSerializer, OrderDetailSerializer,
+    TicketSerializer,
 )
 
 
-class OrderViewSet(BaseViewSetMixin, viewsets.ModelViewSet):
+class OrderViewSet(
+    BaseViewSetMixin,
+    mixins.CreateModelMixin,
+    mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.DestroyModelMixin,
+    viewsets.GenericViewSet,
+):
     serializer_class = OrderSerializer
     pagination_class = DefaultPagination
     permission_classes = [IsAuthenticated]
@@ -35,6 +45,11 @@ class OrderViewSet(BaseViewSetMixin, viewsets.ModelViewSet):
         "create": OrderCreateSerializer,
         "retrieve": OrderDetailSerializer,
     }
+
+    @method_decorator(never_cache)
+    @method_decorator(cache_page(60 * 60, key_prefix="order-list"))
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
 
     def get_queryset(self):
         # Only show current user's orders

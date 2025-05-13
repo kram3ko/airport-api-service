@@ -34,6 +34,7 @@ class OrderListSerializer(serializers.ModelSerializer):
         fields = ["id", "created_at", "user", "tickets", "flight"]
         read_only_fields = ["id", "created_at", "user"]
 
+
 class OrderDetailSerializer(serializers.ModelSerializer):
     user = UserSerializer(many=False, read_only=True)
     tickets = TicketSerializer(many=True, read_only=True)
@@ -112,7 +113,7 @@ class OrderCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = ["id", "user", "tickets"]
-        read_only_fields = ["id", "user","tickets"]
+        read_only_fields = ["id", "user", "tickets"]
 
     def create(self, validated_data):
         with transaction.atomic():

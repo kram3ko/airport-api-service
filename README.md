@@ -21,6 +21,7 @@ Nginx. It also includes a user-friendly database management interface powered by
 - Seamless database visualization and management with pgAdmin
 - Fully containerized deployment using Docker and Docker Compose
 - Swagger Documentation
+- Redis cache
 
 ---
 

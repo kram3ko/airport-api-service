@@ -182,10 +182,20 @@ SPECTACULAR_SETTINGS = {
         "defaultModelExpandDepth": 2,
     },
 }
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": f"redis://{env.str('REDIS_HOST')}:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        },
+    }
+}
+
 # settings for django-debug-toolbar
 INTERNAL_IPS = [
     "127.0.0.1",
     "172.17.0.1",
     "172.18.0.1",
-    "172.18.0.4",
+    "172.18.0.6",
 ]
