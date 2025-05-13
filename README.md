@@ -33,6 +33,7 @@ Nginx. It also includes a user-friendly database management interface powered by
 - **Docker & Docker Compose** — Containerization and orchestration
 - **Nginx** — Web server and reverse proxy
 - **pgAdmin** — Web-based GUI for PostgreSQL
+- **Redis** - Cache service
 
 ---
 

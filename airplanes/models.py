@@ -16,7 +16,7 @@ class AirplaneType(models.Model):
     class Meta:
         ordering = ["id"]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.name} - cat: {self.category}"
 
 
@@ -39,8 +39,8 @@ class Airplane(models.Model):
         ordering = ["id"]
 
     @property
-    def total_seats(self):
+    def total_seats(self) -> int:
         return self.rows * self.seats_in_row
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name
