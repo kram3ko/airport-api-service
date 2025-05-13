@@ -49,7 +49,7 @@ class AirplaneSerializer(serializers.ModelSerializer):
 
 
 class AirplaneDetailSerializer(AirplaneSerializer):
-    airplane_type = AirplaneSerializer(many=False, read_only=True)
+    airplane_type = AirplaneTypeSerializer(many=False, read_only=True)
 
 
 class AirplaneCreateSerializer(AirplaneSerializer):
