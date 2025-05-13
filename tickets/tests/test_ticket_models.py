@@ -65,8 +65,6 @@ class TicketModelTests(TestCase):
 
     def test_ticket_string_representation(self):
         expected_string = (
-            f"Ticket {self.ticket.id} for Flight {self.flight} (Row: 1, Seat: 1)"
+            f"Ticket {self.ticket.id} for Flight {self.flight} (Row: {self.ticket.row}, Seat: {self.ticket.seat})"
         )
         self.assertEqual(str(self.ticket), expected_string)
-
-

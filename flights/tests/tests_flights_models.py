@@ -1,9 +1,9 @@
 from django.test import TestCase
+from django.utils import timezone
 from airports.models import Airport, Route
 from airplanes.models import Airplane, AirplaneType
 from flights.models import Crew, Flight
-from datetime import datetime, timedelta
-
+from datetime import timedelta
 
 class FlightModelTest(TestCase):
     def setUp(self):
@@ -23,8 +23,8 @@ class FlightModelTest(TestCase):
         flight = Flight.objects.create(
             route=self.route,
             airplane=self.airplane,
-            departure_time=datetime.now(),
-            arrival_time=datetime.now() + timedelta(hours=6),
+            departure_time=timezone.now(),
+            arrival_time=timezone.now() + timedelta(hours=6),
         )
         flight.crew.add(self.crew_member)
         self.assertEqual(flight.route, self.route)
@@ -35,8 +35,8 @@ class FlightModelTest(TestCase):
         flight = Flight.objects.create(
             route=self.route,
             airplane=self.airplane,
-            departure_time=datetime.now(),
-            arrival_time=datetime.now() + timedelta(hours=6),
+            departure_time=timezone.now(),
+            arrival_time=timezone.now() + timedelta(hours=6),
         )
         expected_str = f"Flight from {self.route.source} to {self.route.destination} by airplane {self.airplane.name}"
         self.assertEqual(str(flight), expected_str)

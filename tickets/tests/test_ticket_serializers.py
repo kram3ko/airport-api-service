@@ -11,7 +11,8 @@ from tickets.serializers import (
     OrderSerializer,
     TicketSerializer,
     OrderCreateSerializer,
-    TicketCreateSerializer, TickerDetailSerializer,
+    TicketCreateSerializer,
+    TicketDetailSerializer,
 )
 from django.utils import timezone
 from datetime import timedelta
@@ -55,7 +56,11 @@ class TicketSerializerTest(BaseSetupTestCase):
 
 class OrderCreateSerializerTest(BaseSetupTestCase):
     def test_order_create_serializer(self):
-        data = {}
+        data = {
+            "tickets": [
+                {"row": 1, "seat": 1, "flight": self.flight.id}
+            ]
+        }
         serializer = OrderCreateSerializer(
             data=data, context={"request": type("Request", (), {"user": self.user})}
         )
@@ -109,5 +114,5 @@ class FlightWithSeatsSerializerTest(BaseSetupTestCase):
 class TickerDetailSerializerTest(BaseSetupTestCase):
     def test_ticket_detail_serializer(self):
         ticket = Ticket.objects.create(flight=self.flight, row=1, seat=1, order=self.order)
-        serializer = TickerDetailSerializer(ticket)
+        serializer = TicketDetailSerializer(ticket)
         self.assertEqual(serializer.data["airstrip"], "JFK - , ")

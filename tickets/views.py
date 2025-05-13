@@ -9,33 +9,31 @@ from rest_framework.response import Response
 from airports.models import Airport
 from base.mixins import BaseViewSetMixin
 from base.pagination import DefaultPagination
-from base.permissions import IsAdminOrIfAuthenticatedReadOnly
 from flights.models import Flight
 from tickets.models import Order, Ticket
 from tickets.serializers import (
     OrderCreateSerializer,
     OrderListSerializer,
     OrderSerializer,
-    TickerDetailSerializer,
-    TicketCreateSerializer,
+    TicketDetailSerializer,
+    TicketByRouteSerializer,
     TicketListSerializer,
-    TicketSerializer,
+    TicketSerializer, OrderDetailSerializer,
 )
 
 
 class OrderViewSet(BaseViewSetMixin, viewsets.ModelViewSet):
     serializer_class = OrderSerializer
     pagination_class = DefaultPagination
-    permission_classes = [IsAdminOrIfAuthenticatedReadOnly]
+    permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
-    filterset_fields = ["user"]
-    search_fields = ["id"]
     ordering_fields = ["created_at"]
     ordering = ["-created_at"]
 
     action_serializers = {
         "list": OrderListSerializer,
         "create": OrderCreateSerializer,
+        "retrieve": OrderDetailSerializer,
     }
 
     def get_queryset(self):
@@ -48,7 +46,6 @@ class OrderViewSet(BaseViewSetMixin, viewsets.ModelViewSet):
 
 class TicketViewSet(
     BaseViewSetMixin,
-    mixins.CreateModelMixin,
     mixins.RetrieveModelMixin,
     mixins.ListModelMixin,
     viewsets.GenericViewSet,
@@ -57,28 +54,19 @@ class TicketViewSet(
     serializer_class = TicketSerializer
     pagination_class = DefaultPagination
     permission_classes = [IsAuthenticated]
-    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
-    filterset_fields = [
-        "flight__route__source",
-        "flight__route__destination",
-    ]
-    search_fields = ["flight__route__source__name", "flight__route__destination__name"]
-    ordering_fields = ["flight__departure_time"]
-    ordering = ["flight__departure_time"]
 
     action_serializers = {
         "list": TicketListSerializer,
-        "create": TicketCreateSerializer,
-        "retrieve": TickerDetailSerializer,
-        "update": TicketCreateSerializer,
-        "book_by_route": TicketCreateSerializer,
+        "retrieve": TicketDetailSerializer,
+        "book_by_route": TicketByRouteSerializer,
     }
 
     def get_queryset(self):
+        queryset = Ticket.objects.select_related("flight", "order")
         user = self.request.user
-        if user.is_staff:
-            return Ticket.objects.all()
-        return Ticket.objects.filter(order__user=user)
+        if not user.is_staff:
+            queryset = queryset.filter(order__user=user)
+        return queryset.order_by("id")
 
     @action(detail=False, methods=["get"])
     def booking_info(self, request):

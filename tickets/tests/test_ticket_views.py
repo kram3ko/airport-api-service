@@ -71,7 +71,7 @@ class TicketViewSetTest(APITestCase):
 
     def test_create_ticket_invalid_seat(self):
         self.client.force_authenticate(user=self.user)
-        url = reverse("tickets:ticket-list")
+        url = reverse("tickets:ticket-book-by-route")  # Используем правильный эндпоинт
         data = {"row": 2, "seat": 7, "flight": self.flight.id}  # Invalid seat
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
