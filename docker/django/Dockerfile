@@ -8,6 +8,8 @@ LABEL maintainer="volodymyr.vinohradov@gmail.com"
 ENV PYTHONUNBUFFERED=1 \
     UV_PROJECT_ENVIRONMENT="/usr/local/"
 
+RUN apk add --no-cache gcc musl-dev linux-headers
+
 # Set the working directory inside the container
 WORKDIR /app
 

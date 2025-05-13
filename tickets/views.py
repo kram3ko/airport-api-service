@@ -1,6 +1,6 @@
 from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import status, viewsets
+from rest_framework import status, viewsets, mixins
 from rest_framework.decorators import action
 from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.permissions import IsAuthenticated
@@ -47,7 +47,13 @@ class OrderViewSet(BaseViewSetMixin, viewsets.ModelViewSet):
         return Order.objects.filter(user=user)
 
 
-class TicketViewSet(BaseViewSetMixin, viewsets.ModelViewSet):
+class TicketViewSet(
+    BaseViewSetMixin,
+    mixins.CreateModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.ListModelMixin,
+    viewsets.GenericViewSet
+):
     queryset = Ticket.objects.all()
     serializer_class = TicketSerializer
     pagination_class = DefaultPagination

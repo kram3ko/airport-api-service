@@ -42,7 +42,7 @@ Nginx. It also includes a user-friendly database management interface powered by
 ```bash
 git clone git@github.com:kram3ko/airport-api-service.git
 ```
-** Full docker version**
+Full docker version
 ```bash
 git clone git@github.com:kram3ko/docker-airport-api.git
 
