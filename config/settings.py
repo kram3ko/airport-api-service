@@ -154,6 +154,7 @@ REST_FRAMEWORK = {
     ],
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework_simplejwt.authentication.JWTAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
     ],
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "DEFAULT_THROTTLE_CLASSES": [
@@ -198,4 +199,5 @@ INTERNAL_IPS = [
     "172.17.0.1",
     "172.18.0.1",
     "172.18.0.6",
+    "172.18.0.7",
 ]

@@ -69,6 +69,15 @@ services:
       timeout: 5s
       retries: 5
 
+  redisinsight:
+    image: redislabs/redisinsight:latest
+    ports:
+      - "5540:5540"
+    depends_on:
+      - redis
+    restart:
+      always
+
 volumes:
   airport_db:
     name: airport_db

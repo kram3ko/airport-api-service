@@ -1,7 +1,7 @@
 from django.utils import timezone
 from rest_framework import serializers
 
-from airplanes.serializers import AirplaneSerializer
+from airplanes.serializers import AirplaneSerializer, AirplaneDetailSerializer
 from airports.models import Route
 from airports.serializers import (
     RouteCreateSerializer,
@@ -39,8 +39,8 @@ class FlightListSerializer(serializers.ModelSerializer):
 
 
 class FlightDetailSerializer(FlightSerializer):
-    route = RouteListSerializer(many=False, read_only=True)
-    airplane = AirplaneSerializer(many=False, read_only=True)
+    route = RouteSerializer(many=False, read_only=True)
+    airplane = AirplaneDetailSerializer(many=False, read_only=True)
     crew = CrewSerializer(many=True, read_only=True)
 
 

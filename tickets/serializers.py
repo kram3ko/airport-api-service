@@ -2,7 +2,12 @@ from django.db import transaction
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
-from flights.serializers import FlightListSerializer, FlightSerializer
+from airports.serializers import RouteSerializer
+from flights.serializers import (
+    FlightListSerializer,
+    FlightSerializer,
+    FlightDetailSerializer
+)
 from tickets.models import Order, Ticket
 from users.serializers import UserSerializer
 
@@ -24,9 +29,18 @@ class TicketSerializer(serializers.ModelSerializer):
         fields = ["id", "row", "seat", "flight", "order"]
 
 
+class TicketToOrderSerializer(serializers.ModelSerializer):
+    flight = serializers.SlugRelatedField(source="flight.airplane", slug_field="name", read_only=True)
+    route = RouteSerializer(source="flight.route", read_only=True)
+
+    class Meta:
+        model = Ticket
+        fields = ["id", "row", "seat", "flight", "route"]
+
+
 class OrderListSerializer(serializers.ModelSerializer):
     user = serializers.SlugRelatedField(slug_field="email", read_only=True)
-    tickets = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    tickets = TicketToOrderSerializer(many=True, read_only=True)
     flight = serializers.PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
@@ -37,8 +51,8 @@ class OrderListSerializer(serializers.ModelSerializer):
 
 class OrderDetailSerializer(serializers.ModelSerializer):
     user = UserSerializer(many=False, read_only=True)
-    tickets = TicketSerializer(many=True, read_only=True)
-    flight = FlightListSerializer(many=False, read_only=True)
+    tickets = TicketToOrderSerializer(many=True, read_only=True)
+    flight = FlightDetailSerializer(many=False, read_only=True)
 
     class Meta:
         model = Order
