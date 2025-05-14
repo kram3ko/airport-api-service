@@ -25,7 +25,6 @@ from tickets.serializers import (
 )
 
 
-# @method_decorator(never_cache, name="list")
 @method_decorator(cache_page(60 * 60, key_prefix="order-list"), name="list")
 class OrderViewSet(
     BaseViewSetMixin,
@@ -55,7 +54,6 @@ class OrderViewSet(
             return Order.objects.all()
         return Order.objects.filter(user=user)
 
-# @method_decorator(never_cache, name="list")
 @method_decorator(cache_page(60 * 60, key_prefix="ticket-list"), name="list")
 class TicketViewSet(
     BaseViewSetMixin,
