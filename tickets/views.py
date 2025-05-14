@@ -25,6 +25,8 @@ from tickets.serializers import (
 )
 
 
+@method_decorator(never_cache)
+@method_decorator(cache_page(60 * 60, key_prefix="list"), name="list")
 class OrderViewSet(
     BaseViewSetMixin,
     mixins.CreateModelMixin,
@@ -45,11 +47,6 @@ class OrderViewSet(
         "create": OrderCreateSerializer,
         "retrieve": OrderDetailSerializer,
     }
-
-    @method_decorator(never_cache)
-    @method_decorator(cache_page(60 * 60, key_prefix="order-list"))
-    def list(self, request, *args, **kwargs):
-        return super().list(request, *args, **kwargs)
 
     def get_queryset(self):
         # Only show current user's orders
