@@ -1,0 +1,90 @@
+services:
+  django:
+    build:
+      context: .
+      dockerfile: docker/django/Dockerfile
+    container_name: django-rest
+    image: kram3ko/airport
+    ports:
+      - "8001:8000"
+    env_file:
+      - .env
+    volumes:
+      # no sync for production
+      #      - ./:/app
+      - airport_media:/files/media
+      - airport_static:/files/static
+    depends_on:
+      airport_db:
+        condition: service_healthy
+
+  nginx:
+    image: nginx:alpine
+    container_name: airport-nginx
+    volumes:
+      - ./docker/nginx/sites-available/:/etc/nginx/conf.d:ro/
+      - airport_media:/files/media
+      - airport_static:/files/static
+    ports:
+      - "80:80"
+    depends_on:
+      - django
+
+  airport_db:
+    image: postgres:alpine
+    container_name: airport-db
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "5432:5432"
+    env_file:
+      - .env
+    volumes:
+      - airport_db:$PGDATA
+
+  pgadmin4:
+    image: dpage/pgadmin4
+    container_name: pgadmin4_container
+    ports:
+      - "8888:80"
+    env_file:
+      - .env
+    depends_on:
+      airport_db:
+        condition: service_healthy
+    volumes:
+      - pgadmin_data:$PGADMIN
+
+  redis:
+    image: redis:latest
+    volumes:
+      - redis_airport_data:/data
+    restart: always
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redisinsight:
+    image: redislabs/redisinsight:latest
+    ports:
+      - "5540:5540"
+    depends_on:
+      - redis
+    restart:
+      always
+
+volumes:
+  airport_db:
+    name: airport_db
+  airport_media:
+    name: airport_media
+  airport_static:
+    name: airport_static
+  pgadmin_data:
+    name: pgadmin_data_volume
+  redis_airport_data:
